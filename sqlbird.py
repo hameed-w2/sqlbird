@@ -1,32 +1,34 @@
 # sqlbird.py
+
 import argparse
 from injector import Injector
-from utils import banner
 
 def main():
-    banner()
-    
-    parser = argparse.ArgumentParser(description="SQLBird - Lightweight SQLi automation tool")
-    parser.add_argument("--url", help="Target URL (with injectable param)", required=True)
-    parser.add_argument("--method", help="HTTP method (GET or POST)", default="GET")
-    parser.add_argument("--data", help="POST data for injection")
-    parser.add_argument("--cookie", help="Add custom cookie header")
-    parser.add_argument("--agent", help="Set custom User-Agent")
-    parser.add_argument("--tor", help="Use TOR proxy", action="store_true")
+    parser = argparse.ArgumentParser(
+        description="SQLBird - Lightweight SQLi exploitation tool (Termux compatible)"
+    )
 
-    # SQLi options
-    parser.add_argument("--dbs", help="Enumerate databases", action="store_true")
-    parser.add_argument("--tables", help="List tables in a DB", action="store_true")
-    parser.add_argument("-D", help="Specify database name")
-    parser.add_argument("--columns", help="List columns in a table", action="store_true")
-    parser.add_argument("-T", help="Specify table name")
-    parser.add_argument("-C", help="Specify columns to dump")
-    parser.add_argument("--dump", help="Dump table data", action="store_true")
+    parser.add_argument('--url', required=True, help='Target URL (e.g. http://site.com/page.php?id=1)')
+    parser.add_argument('--method', choices=['GET', 'POST'], default='GET', help='HTTP method to use')
+    parser.add_argument('--data', help='POST data (e.g. "id=1") if method is POST')
+
+    parser.add_argument('--test', action='store_true', help='Test if target is injectable')
+    parser.add_argument('--dbs', action='store_true', help='Enumerate databases')
+    parser.add_argument('--tables', action='store_true', help='Enumerate tables')
+    parser.add_argument('--columns', action='store_true', help='Enumerate columns')
+    parser.add_argument('--dump', action='store_true', help='Dump data from target')
+    parser.add_argument('--auto', action='store_true', help='Automatically extract everything (dbs→tables→columns→dump)')
+
+    parser.add_argument('-D', '--db', help='Database name')
+    parser.add_argument('-T', '--table', help='Table name')
+    parser.add_argument('-C', '--columns-list', help='Comma-separated list of columns to dump')
+
+    parser.add_argument('--out', help='Save output to a file')
 
     args = parser.parse_args()
 
     injector = Injector(args)
     injector.run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
